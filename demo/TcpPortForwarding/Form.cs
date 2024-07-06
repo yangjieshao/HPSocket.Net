@@ -48,6 +48,7 @@ namespace TcpPortForwarding
 
             // 事件绑定, 如果你不需要处理数据包和连接黑名单等业务, 只是纯做tcp转发, 事件也无需绑定, 直接[启动按钮]事件的代码设置好属性, 然后start()就ok了
             // 转发组件内部server组件的事件
+            _portForwarding.OnServerAcceptBefore += OnServerAcceptBefore;
             _portForwarding.OnServerAccept += OnServerAccept;
             _portForwarding.OnServerReceive += OnServerReceive;
             _portForwarding.OnServerClose += OnServerClose;
@@ -60,14 +61,23 @@ namespace TcpPortForwarding
         }
 
         // ReSharper disable once MemberCanBeMadeStatic.Local
-        private HandleResult OnServerAccept(IServer sender, IntPtr connId, IntPtr client)
+        private HandleResult OnServerAcceptBefore(IServer sender, IntPtr connId, IntPtr client)
         {
+            // 这里可以获取客户端ip, 封ip等操作
             AddLog($"OnServerAccept({connId})");
             return HandleResult.Ok;
         }
 
         // ReSharper disable once MemberCanBeMadeStatic.Local
-        private HandleResult OnServerReceive(IServer sender, IntPtr connId, byte[] data)
+        private HandleResult OnServerAccept(IServer sender, IntPtr connId, IntPtr client)
+        {
+            // 这里到了说明客户端已经连接上了
+            AddLog($"OnServerAccept({connId})");
+            return HandleResult.Ok;
+        }
+
+        // ReSharper disable once MemberCanBeMadeStatic.Local
+        private HandleResult OnServerReceive(IServer sender, IntPtr connId, ref byte[] data)
         {
             // 1.返回 HandleResult.Ignore 将忽略这个包的转发
             // 2.返回 HandleResult.Ok 将继续转发这个包
@@ -92,7 +102,7 @@ namespace TcpPortForwarding
         }
 
         // ReSharper disable once MemberCanBeMadeStatic.Local
-        private HandleResult OnAgentReceive(IAgent sender, IntPtr connId, byte[] data)
+        private HandleResult OnAgentReceive(IAgent sender, IntPtr connId, ref byte[] data)
         {
             // 1.返回 HandleResult.Ignore 将忽略这个包的转发
             // 2.返回 HandleResult.Ok 将继续转发这个包
