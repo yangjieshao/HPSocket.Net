@@ -573,7 +573,13 @@ namespace HPSocket.Base
 
                             break;
                         }
+                        default:
+                        {
+                            return HandleResult.Error;
+                        }
                     }
+
+                    return HandleResult.Ok;
                 }
                 else if (ConnectionTimeout > 0)
                 {
@@ -662,6 +668,7 @@ namespace HPSocket.Base
                                 {
                                     return HandleResult.Error;
                                 }
+                                _nativeExtra.ProxyConnectionState = ProxyConnectionState.Step2;
                             }
                             else
                             {

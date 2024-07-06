@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+
 using HPSocket;
 using HPSocket.Proxy;
 using HPSocket.Tcp;
+
 using Models;
+
 using Newtonsoft.Json;
 
 namespace TcpAgentTestEcho
@@ -236,15 +239,15 @@ namespace TcpAgentTestEcho
             switch (packet.Type)
             {
                 case PacketType.Echo: // 回显是个字符串显示操作
-                {
-                    AddLog($"OnProcessFullPacket(), type: {packet.Type}, content: {packet.Data}");
-                    break;
-                }
+                    {
+                        AddLog($"OnProcessFullPacket(), type: {packet.Type}, content: {packet.Data}");
+                        break;
+                    }
                 case PacketType.Time: // 获取服务器时间依然是个字符串操作^_^
-                {
-                    AddLog($"OnProcessFullPacket(), type: {packet.Type}, time: {packet.Data}");
-                    break;
-                }
+                    {
+                        AddLog($"OnProcessFullPacket(), type: {packet.Type}, time: {packet.Data}");
+                        break;
+                    }
                 default:
                     result = HandleResult.Error;
                     break;
@@ -325,11 +328,11 @@ namespace TcpAgentTestEcho
                     }
 
                     // 连接到目标服务器 
-                    for (var i = 0; i < 100; i++)
+                    for (var i = 0; i < 10; i++)
                     {
                         // 这里模拟连接几个连接不上的服务器, 前面设置了超时3秒, 所以这些连接不上的到3秒会超时
-                        //if (!_agent.Connect(i % 2 == 0 ? "127.0.0.1" : "192.168.37.38", 5555))
-                        if (!_agent.Connect(  "127.0.0.1"  , 5555))
+                        if (!_agent.Connect(i % 2 == 0 ? "127.0.0.1" : "192.168.37.38", 5555))
+                        // if (!_agent.Connect("127.0.0.1", 5555))
                         {
                             throw new Exception($"error code: {_agent.ErrorCode}, error message: {_agent.ErrorMessage}");
                         }

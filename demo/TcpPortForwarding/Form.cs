@@ -69,6 +69,10 @@ namespace TcpPortForwarding
         // ReSharper disable once MemberCanBeMadeStatic.Local
         private HandleResult OnServerReceive(IServer sender, IntPtr connId, byte[] data)
         {
+            // 1.返回 HandleResult.Ignore 将忽略这个包的转发
+            // 2.返回 HandleResult.Ok 将继续转发这个包
+            // 3.返回 HandleResult.Error 将断开这个连接
+            // 4.可对data进行修改, 修改后将转发修改后的数据包, 若不需要发送这个包, 请直接返回 HandleResult.Ignore
             AddLog($"OnServerReceive({connId}), data length: {data.Length}");
             return HandleResult.Ok;
         }
@@ -90,6 +94,10 @@ namespace TcpPortForwarding
         // ReSharper disable once MemberCanBeMadeStatic.Local
         private HandleResult OnAgentReceive(IAgent sender, IntPtr connId, byte[] data)
         {
+            // 1.返回 HandleResult.Ignore 将忽略这个包的转发
+            // 2.返回 HandleResult.Ok 将继续转发这个包
+            // 3.返回 HandleResult.Error 将断开这个连接
+            // 4.可对data进行修改, 修改后将转发修改后的数据包, 若不需要发送这个包, 请直接返回 HandleResult.Ignore
             AddLog($"OnAgentReceive({connId}), data length: {data.Length}");
             return HandleResult.Ok;
         }
