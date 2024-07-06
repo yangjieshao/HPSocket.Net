@@ -84,4 +84,9 @@ namespace HPSocket
     /// <param name="proxy"></param>
     /// <returns></returns>
     public delegate void ClientProxyConnectedEventHandler(IClient sender, IProxy proxy);
+
+
+
+    public delegate HandleResult ForwardingServerReceiveEventHandler(IServer sender, IntPtr connId, ref byte[] data);
+    public delegate HandleResult ForwardingAgentReceiveEventHandler(IAgent sender, IntPtr connId, ref byte[] data);
 }

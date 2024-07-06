@@ -88,10 +88,13 @@ namespace HPSocket.Tcp
         #region 事件
 
         /// <inheritdoc />
+        public event ServerAcceptEventHandler OnServerAcceptBefore;
+
+        /// <inheritdoc />
         public event ServerAcceptEventHandler OnServerAccept;
 
         /// <inheritdoc />
-        public event ServerReceiveEventHandler OnServerReceive;
+        public event ForwardingServerReceiveEventHandler OnServerReceive;
 
         /// <inheritdoc />
         public event ServerCloseEventHandler OnServerClose;
@@ -100,7 +103,7 @@ namespace HPSocket.Tcp
         public event AgentConnectEventHandler OnAgentConnect;
 
         /// <inheritdoc />
-        public event AgentReceiveEventHandler OnAgentReceive;
+        public event ForwardingAgentReceiveEventHandler OnAgentReceive;
 
         /// <inheritdoc />
         public event AgentCloseEventHandler OnAgentClose;
@@ -237,6 +240,12 @@ namespace HPSocket.Tcp
 
         protected HandleResult ServerAccept(IServer sender, IntPtr connId, IntPtr client)
         {
+            // 连接进入之前
+            if (OnServerAcceptBefore?.Invoke(sender, connId, client) == HandleResult.Error)
+            {
+                return HandleResult.Error;
+            }
+
             // 暂停接收数据
             if (!sender.PauseReceive(connId))
             {
@@ -283,7 +292,7 @@ namespace HPSocket.Tcp
                 return HandleResult.Error;
             }
 
-            var hr = OnServerReceive?.Invoke(sender, connId, data) ?? HandleResult.Ok;
+            var hr = OnServerReceive?.Invoke(sender, connId, ref data) ?? HandleResult.Ok;
             if (hr == HandleResult.Ok)
             {
                 if (!extra.Agent.Send(extra.AgentConnId, data, data.Length))
@@ -346,7 +355,7 @@ namespace HPSocket.Tcp
                 return HandleResult.Error;
             }
 
-            var hr = OnAgentReceive?.Invoke(sender, connId, data) ?? HandleResult.Ok;
+            var hr = OnAgentReceive?.Invoke(sender, connId, ref data) ?? HandleResult.Ok;
             if (hr == HandleResult.Ok)
             {
                 if (!extra.Server.Send(extra.ServerConnId, data, data.Length))

@@ -39,13 +39,18 @@ namespace HPSocket
         #region 事件
 
         /// <summary>
-        /// server 连接进入
+        /// server 连接进入之前
+        /// </summary>
+        event ServerAcceptEventHandler OnServerAcceptBefore;
+
+        /// <summary>
+        /// server 连接成功进入了
         /// </summary>
         event ServerAcceptEventHandler OnServerAccept;
         /// <summary>
         /// server 数据到达
         /// </summary>
-        event ServerReceiveEventHandler OnServerReceive;
+        event ForwardingServerReceiveEventHandler OnServerReceive;
         /// <summary>
         /// server 连接离开
         /// </summary>
@@ -58,7 +63,7 @@ namespace HPSocket
         /// <summary>
         /// agent 数据到达
         /// </summary>
-        event AgentReceiveEventHandler OnAgentReceive;
+        event ForwardingAgentReceiveEventHandler OnAgentReceive;
         /// <summary>
         /// agent 连接断开
         /// </summary>
