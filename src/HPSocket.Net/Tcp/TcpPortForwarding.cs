@@ -318,7 +318,13 @@ namespace HPSocket.Tcp
 
         private HandleResult AgentConnect(IAgent sender, IntPtr connId, IProxy proxy)
         {
-            var extra = _agentExtraData.Get(connId);
+            if (!sender.GetConnectionExtra(connId, out var serverConnId) || serverConnId == IntPtr.Zero)
+            {
+                SetErrorInfo(sender);
+                return HandleResult.Error;
+            }
+
+            var extra = _serverExtraData.Get(serverConnId);
             if (extra == null)
             {
                 return HandleResult.Error;
@@ -364,6 +370,14 @@ namespace HPSocket.Tcp
                     extra.Server.Disconnect(extra.ServerConnId);
                 }
             }
+            else
+            {
+                if (sender.GetConnectionExtra(connId, out var serverConnId) && serverConnId != IntPtr.Zero)
+                {
+                    _server.Disconnect(serverConnId);
+                }
+            }
+
 
             return OnAgentClose?.Invoke(sender, connId, socketOperation, errorCode) ?? HandleResult.Ok;
         }
