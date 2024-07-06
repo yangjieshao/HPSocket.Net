@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net48</TargetFramework>
-		<Platforms>x64</Platforms>
+		<TargetFrameworks>net20;net40;netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
+		<Platforms>AnyCPU;x64;x86</Platforms>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<AssemblyName>HPSocket.Net</AssemblyName>
 		<RootNamespace>HPSocket</RootNamespace>
