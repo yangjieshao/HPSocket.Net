@@ -892,18 +892,16 @@ namespace HPSocket.Base
 
             if (_proxyList?.Count > 0 && NativeGetConnectionExtra(connId, out var nativeId))
             {
-                if (nativeId == IntPtr.Zero)
-                {
-                    _onReceive = SdkOnReceiveNoProxy;
-                    return OnReceive?.Invoke(this, connId, bytes) ?? HandleResult.Ignore;
-                }
-
                 var nativeExtra = _connNativeData.Get(nativeId.ToInt32());
                 if (nativeExtra == null)
                 {
                     return HandleResult.Error;
                 }
 
+                if (nativeExtra.ProxyConnectionState == ProxyConnectionState.Normal)
+                {
+                    return OnReceive?.Invoke(this, connId, bytes) ?? HandleResult.Ignore;
+                }
 
                 var proxy = nativeExtra.Proxy;
                 if (proxy == null)
@@ -929,8 +927,6 @@ namespace HPSocket.Base
                                 nativeExtra.ProxyConnectionState = ProxyConnectionState.Normal;
                                 // _connNativeData.Remove(nativeId.ToInt32());
                                 // NativeSetConnectionExtra(connId, IntPtr.Zero);
-
-                                _onReceive = SdkOnReceiveNoProxy;
 
                                 OnProxyConnected?.Invoke(this, connId, proxy);
 
@@ -1023,8 +1019,6 @@ namespace HPSocket.Base
                             // _connNativeData.Remove(nativeId.ToInt32());
                             // NativeSetConnectionExtra(connId, IntPtr.Zero);
 
-                            _onReceive = SdkOnReceiveNoProxy;
-
                             OnProxyConnected?.Invoke(this, connId, proxy);
 
                             if (OnConnect?.Invoke(this, connId, proxy) == HandleResult.Error)
@@ -1067,6 +1061,7 @@ namespace HPSocket.Base
                         errorCode = (int)socketOperation;
                     }
                 }
+                _connNativeData.Remove(nativeId.ToInt32());
                 NativeSetConnectionExtra(connId, IntPtr.Zero);
             }
 
