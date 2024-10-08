@@ -1045,7 +1045,7 @@ namespace HPSocket.Base
                 Marshal.Copy(data, bytes, 0, length);
             }
 
-            return HandleResult.Ok;
+            return OnSend(this, connId, bytes);
         }
 
         protected HandleResult SdkOnClose(IntPtr sender, IntPtr connId, SocketOperation socketOperation, int errorCode)
